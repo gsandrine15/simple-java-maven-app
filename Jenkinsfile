@@ -23,8 +23,13 @@ pipeline {
                     releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
                 )
-                rtPublishBuildInfo (
-                    serverId: "jfrog"
+                rtMavenDeployer (
+                    id: 'maven',
+                    serverId: 'jfrog',
+                    releaseRepo: 'libs-release-local',
+                    snapshotRepo: 'libs-snapshot-local',
+                    // By default, 3 threads are used to upload the artifacts to Artifactory. You can override this default by setting:
+                    threads: 6
                 )
              }
          }
