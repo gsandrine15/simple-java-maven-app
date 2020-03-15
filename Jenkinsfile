@@ -52,7 +52,7 @@ pipeline {
                 rtMavenRun (
                     tool: 'mavel', // Tool name from Jenkins configuration
                     pom: 'pom.xml',
-                    goals: 'clean install',
+                    goals: 'mvn -B -DskipTests clean package',
                     deployerId: "MAVEN_DEPLOYER",
                     resolverId: "MAVEN_RESOLVER"
                 )
