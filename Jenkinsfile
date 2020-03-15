@@ -47,29 +47,17 @@ pipeline {
                     url: jfrog,
                     credentialsId: jfrog
                 )
-
-                rtMavenDeployer (
-                    id: "maven",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
-                )
-
                 rtMavenResolver (
                     id: "maven",
                     serverId: "jfrog",
                     releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
                 )
-             }
-         } 
-        stage ('Publish build info') {
-            steps {
-               rtPublishBuildInfo (
+                rtPublishBuildInfo (
                   serverId: "jfrog"
-                )
-            }
-        }
+                 )
+             }
+         }             
         stage('Deliver') {
             steps {
                 sh 'java -jar /var/jenkins_home/workspace/simple-java-maven-app/target/my-app-1.0-SNAPSHOT.jar'
