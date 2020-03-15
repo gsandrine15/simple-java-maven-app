@@ -25,11 +25,6 @@ pipeline {
               }
             }
           }
-        stage('Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
-            }
-        }
         stage ('Artifactory configuration') {
             steps {
                rtServer (
@@ -50,8 +45,26 @@ pipeline {
                     snapshotRepo: 'libs-snapshot-local',
                     // By default, 3 threads are used to upload the artifacts to Artifactory. You can override this default by setting:
                 )
+                rtMavenRun (
+                    // Tool name from Jenkins configuration.
+                    tool: MAVEN_TOOL,
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    // Maven options.
+                    opts: '-Xms1024m -Xmx4096m',
+                    resolverId: 'resolver',
+                    deployerId: 'deploy',
+                    // If the build name and build number are not set here, the current job name and number will be used:
+                   buildName: 'my-build-name',
+                   buildNumber: '17'
+                )
              }
          }
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
         stage('Test') {
             steps {
                 sh 'mvn test'
