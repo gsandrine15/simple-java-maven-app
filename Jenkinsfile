@@ -47,7 +47,7 @@ pipeline {
                 )
                 rtMavenRun (
                     // Tool name from Jenkins configuration.
-                    tool: MAVEN_TOOL,
+                    tool: maven,
                     pom: 'pom.xml',
                     goals: 'clean install',
                     // Maven options.
