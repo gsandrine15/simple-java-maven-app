@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                sh './scripts/deliver.sh'
+                sh 'java -jar target/${NAME}-${VERSION}.jar'
             }
         }
     }
