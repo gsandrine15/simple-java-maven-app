@@ -32,7 +32,14 @@ pipeline {
                     snapshotRepo: "libs-snapshot"
                 )
              }
-         }     
+         } 
+           stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "jfrog"
+                )
+            }
+        }
         stage("build & SonarQube analysis") {
             agent any
             steps {
@@ -61,15 +68,6 @@ pipeline {
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
-            }
-        }
-        stage ('Publish build info') {
-            steps {
-                rtPublishBuildInfo (
-                    id: "jfrog",
-                    url: jfrog,
-                    credentialsId: jfrog
-                )
             }
         }
         stage('Deliver') {
