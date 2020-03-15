@@ -9,7 +9,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/kohbah/simple-java-maven-app.git'
             }
-        }       
+        }
         stage("build & SonarQube analysis") {
             agent any
             steps {
@@ -25,26 +25,6 @@ pipeline {
               }
             }
           }
-        stage ('Artifactory configuration') {
-            steps {
-               rtServer (
-                 id: "jfrog",
-                 url: jfrog,
-                 credentialsId: jfrog
-                )
-                rtMavenResolver (
-                    id: "resolver",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-                rtMavenDeployer (
-                    id: 'deploy',
-                    serverId: 'jfrog',
-                    releaseRepo: 'libs-release-local',
-                    snapshotRepo: 'libs-snapshot-local',
-                )
-            }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
@@ -59,7 +39,37 @@ pipeline {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
-        }      
+        }
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
+                )
+
+                rtMavenDeployer (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
+                )
+
+                rtMavenResolver (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+             }
+         }
+        stage ('Publish build info') {
+            steps {
+               rtPublishBuildInfo (
+                  serverId: "jfrog"
+                )
+            }
+        }
         stage('Deliver') {
             steps {
                 sh 'java -jar /var/jenkins_home/workspace/simple-java-maven-app/target/my-app-1.0-SNAPSHOT.jar'
