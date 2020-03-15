@@ -55,6 +55,7 @@ pipeline {
                 )
                 rtPublishBuildInfo (
                   serverId: "jfrog"
+                  credentialsId: jfrog
                  )
              }
          }             
