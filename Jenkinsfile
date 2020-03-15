@@ -59,6 +59,9 @@ pipeline {
             steps {
                 rtPublishBuildInfo (
                     serverId: "jfrog"
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
                 )
             }
         }
