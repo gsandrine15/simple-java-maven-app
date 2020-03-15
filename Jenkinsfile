@@ -9,7 +9,32 @@ pipeline {
             steps {
                 git url: 'https://github.com/kohbah/simple-java-maven-app.git'
             }
-        }       
+        }
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
+                )
+                rtMavenResolver (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+             }
+         }
+        stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "jfrog"
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
+                )
+            }
+        }
         stage("build & SonarQube analysis") {
             agent any
             steps {
@@ -40,31 +65,6 @@ pipeline {
                 }
             }
         }      
-        stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "jfrog",
-                    url: jfrog,
-                    credentialsId: jfrog
-                )
-                rtMavenResolver (
-                    id: "maven",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-             }
-         }
-        stage ('Publish build info') {
-            steps {
-                rtPublishBuildInfo (
-                    serverId: "jfrog"
-                    id: "jfrog",
-                    url: jfrog,
-                    credentialsId: jfrog
-                )
-            }
-        }
         stage('Deliver') {
             steps {
                 sh 'java -jar /var/jenkins_home/workspace/simple-java-maven-app/target/my-app-1.0-SNAPSHOT.jar'
