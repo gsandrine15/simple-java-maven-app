@@ -25,44 +25,9 @@ pipeline {
               }
             }
           }
-          stage ('Artifactory configuration') {
+        stage('Build') {
             steps {
-              rtServer (
-                    id: "jfrog",
-                    url: jfrog,
-                    credentialsId: jfrog
-                )
-
-              rtMavenDeployer (
-                    id: "MAVEN_DEPLOYER",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
-                )
-               rtMavenResolver (
-                    id: "MAVEN_RESOLVER",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-             }
-         }
-        stage ('Exec Maven') {
-            steps {
-                rtMavenRun (
-                    tool: 'maven', // Tool name from Jenkins configuration
-                    pom: 'pom.xml',
-                    goals: 'mvn -B -DskipTests clean package',
-                    deployerId: "MAVEN_DEPLOYER",
-                    resolverId: "MAVEN_RESOLVER"
-                )
-            }
-        }
-        stage ('Publish build info') {
-            steps {
-                rtPublishBuildInfo (
-                    serverId: "jfrog"
-                )
+                sh 'mvn -B -DskipTests clean package'
             }
         }
         stage('Test') {
@@ -74,8 +39,24 @@ pipeline {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
-        }        
-        stage ('Deliver') {
+        }
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
+                )
+             }
+         }
+        stage ('Publish build info') {
+            steps {
+               rtPublishBuildInfo (
+                  serverId: "jfrog"
+                )
+            }
+        }
+        stage('Deliver') {
             steps {
                 sh 'java -jar /var/jenkins_home/workspace/simple-java-maven-app/target/my-app-1.0-SNAPSHOT.jar'
             }
