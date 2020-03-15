@@ -39,12 +39,7 @@ pipeline {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
-        }
-        stage ('Clone') {
-            steps {
-                git url: 'https://github.com/kohbah/simple-java-maven-app.git'
-            }
-        }       
+        }      
         stage ('Artifactory configuration') {
             steps {
                 rtServer (
