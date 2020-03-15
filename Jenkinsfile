@@ -9,37 +9,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/kohbah/simple-java-maven-app.git'
             }
-        }
-         stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "jfrog",
-                    url: jfrog,
-                    credentialsId: jfrog
-                )
-
-                rtMavenDeployer (
-                    id: "maven",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
-                )
-
-                rtMavenResolver (
-                    id: "maven",
-                    serverId: "jfrog",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-             }
-         } 
-           stage ('Publish build info') {
-            steps {
-                rtPublishBuildInfo (
-                    serverId: "jfrog"
-                )
-            }
-        }
+        }       
         stage("build & SonarQube analysis") {
             agent any
             steps {
@@ -68,6 +38,36 @@ pipeline {
                 always {
                     junit 'target/surefire-reports/*.xml'
                 }
+            }
+        }
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
+                )
+
+                rtMavenDeployer (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
+                )
+
+                rtMavenResolver (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+             }
+         } 
+           stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "jfrog"
+                )
             }
         }
         stage('Deliver') {
