@@ -10,6 +10,16 @@ pipeline {
                 git url: 'https://github.com/kohbah/simple-java-maven-app.git'
             }
         }
+         stage ('Code Quality') {
+             steps {
+                 script {
+                    def scannerHome = tool 'SonarQubeScanner';
+                    withSonarQubeEnv("sonar") {
+                    sh "${tool("SonarQubeScanner")}/bin/sonar-scanner"
+                                       }
+                               }
+                           }
+                        }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
