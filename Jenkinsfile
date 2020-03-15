@@ -10,19 +10,29 @@ pipeline {
                 git url: 'https://github.com/kohbah/simple-java-maven-app.git'
             }
         }
-        stage ('Artifactory configuration') {
-            // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
-            server = Artifactory.server jfrog
+         stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "jfrog",
+                    url: http://10.0.1.113:8081/artifactory,
+                    credentialsId: jfrog
+                )
 
-            rtMaven = Artifactory.newMavenBuild()
-            rtMaven.tool = MAVEN_TOOL // Tool name from Jenkins configuration
-            rtMaven.deployer releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local', server: server
-            rtMaven.resolver releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot', server: server
-            rtMaven.deployer.deployArtifacts = false // Disable artifacts deployment during Maven run
+                rtMavenDeployer (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
+                )
 
-            buildInfo = Artifactory.newBuildInfo()
-          }
-        
+                rtMavenResolver (
+                    id: "maven",
+                    serverId: "jfrog",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+             }
+         }     
         stage("build & SonarQube analysis") {
             agent any
             steps {
