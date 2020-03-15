@@ -1,11 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
     stages {
+        stage ('Clone') {
+        git url: 'https://github.com/kohbah/simple-java-maven-app.git
+            }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
@@ -23,7 +21,7 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                sh './jenkins/scripts/deliver.sh'
+                sh './scripts/deliver.sh'
             }
         }
     }
