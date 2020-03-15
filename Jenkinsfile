@@ -56,7 +56,7 @@ pipeline {
                 )
 
                 rtMavenResolver (
-                    id: "maven",
+                    id: "resolver",
                     serverId: "jfrog",
                     releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
