@@ -54,8 +54,9 @@ pipeline {
                     snapshotRepo: "libs-snapshot"
                 )
                 rtPublishBuildInfo (
-                  serverId: "jfrog"
-                  credentialsId: jfrog
+                    id: "jfrog",
+                    url: jfrog,
+                    credentialsId: jfrog
                  )
              }
          }             
