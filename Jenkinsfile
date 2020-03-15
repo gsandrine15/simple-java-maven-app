@@ -34,7 +34,6 @@ pipeline {
                 always {
                     echo 'I have finished and deleting workspace'
                     deleteDir() 
-                }
             }
         }
     }
