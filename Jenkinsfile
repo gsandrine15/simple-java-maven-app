@@ -29,7 +29,7 @@ pipeline {
             steps {
                 rtPublishBuildInfo (
                     serverId: "jfrog"
-                    credentialsId: jfrog
+                    def server = Artifactory.newServer url: 'jfrog', credentialsId: 'jfrog'
                 )
             }
         }
