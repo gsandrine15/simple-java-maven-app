@@ -23,16 +23,11 @@ pipeline {
                     releaseRepo: "libs-release",
                     snapshotRepo: "libs-snapshot"
                 )
-             }
-         }
-        stage ('Publish build info') {
-            steps {
                 rtPublishBuildInfo (
                     serverId: "jfrog"
-                    def server = Artifactory.newServer url: 'jfrog', credentialsId: 'jfrog'
                 )
-            }
-        }
+             }
+         }
         stage("build & SonarQube analysis") {
             agent any
             steps {
